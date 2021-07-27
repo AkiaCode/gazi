@@ -1,5 +1,9 @@
 import setuptools
 
+requirements = []
+with open('requirements.txt') as f:
+    requirements = f.read().splitlines()
+
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
@@ -9,6 +13,7 @@ setuptools.setup(
     author="Catry",
     description="class-based web framework",
     license="MIT",
+    requirements=requirements,
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/akiacode/gaji",
@@ -20,7 +25,6 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    package_dir={"": "src"},
-    packages=setuptools.find_packages(where="src"),
+    packages=setuptools.find_packages(exclude=["tests"]),
     python_requires=">=3.6",
 )
