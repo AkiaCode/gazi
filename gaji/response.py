@@ -17,3 +17,8 @@ class Response:
 class HtmlResponse(Response):
     def __init__(self, data, status=200):
         super().__init__(data, status, "text/html")
+
+
+class JsonResponse(Response):
+    def __init__(self, data, status=200):
+        super().__init__(data, status, "application/json")
