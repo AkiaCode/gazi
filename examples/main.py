@@ -1,5 +1,5 @@
 import uvicorn
-from examples.pages.home import Home
+from examples.pages.home import _ as Home
 from examples.pages.api import API
 from gaji.route import Route
 from gaji import App

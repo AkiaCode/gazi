@@ -1,19 +1,23 @@
+from gaji.response import HtmlResponse, Response
+from gaji.request import Request
 from gaji.route import method
 
 # /api/*
 class API:
     def __init__(self) -> None:
         pass
-    # 404: /api/*
-    def __404__(self) -> str:
-        return "404"
 
-    #  /api/hello/{name:str}
+    #  /api
     @method.GET
-    def hello(self, name: str) -> str:
-        return f"Hello world, Username: {name}"
+    def __render__(self) -> Response:
+        return Response("API")
 
-    # /api/bye/{name}
-    @method.POST
-    def bye(self, name) -> str:
-        return f"Bye {name}"
+    #  /api/hello
+    @method.GET
+    def hello(self, request: Request) -> Response:
+        return HtmlResponse(f"<h1>Hello world, Username: {request.query('name')}</h1>")
+
+    # /api/bye
+    @method.GET
+    def bye(self, request: Request) -> Response:
+        return HtmlResponse(f"<h1>Bye world, Username: {request.query('name')}</h1>")

@@ -1,6 +1,13 @@
+from gaji.request import Request
+from gaji.route import method
+from gaji.response import HtmlResponse, Response
+
 # /
-class Home:
+class _:
     def __init__(self) -> None:
         pass
-    def render(self) -> str:
-        return '<h1>Hello, world!</h1>'
+
+    # /
+    @method.GET
+    def __render__(self) -> Response:
+        return HtmlResponse("<h1>Hello, world!</h1>")
