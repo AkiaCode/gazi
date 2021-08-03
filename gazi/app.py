@@ -1,4 +1,4 @@
-from gaji.route import Route
+from gazi.route import Route
 import typing
 
 
@@ -50,11 +50,7 @@ class App:
             elif (
                 "/" + route["class_name"].lower() + "/" + route["func_name"].lower()
                 == scope["path"].lower()
-                or "/"
-                + route["class_name"].lower()
-                + "/"
-                + route["func_name"].lower()
-                + "/"
+                or "/" + route["class_name"].lower() + "/" + route["func_name"].lower() + "/"
                 == scope["path"].lower()
                 and route["method"] == scope["method"]
             ):

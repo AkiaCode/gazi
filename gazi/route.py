@@ -1,4 +1,4 @@
-from gaji.request import Request
+from gazi.request import Request
 import typing
 
 

@@ -1,5 +1,5 @@
-from gaji.route import method
-from gaji.response import HtmlResponse, Response
+from gazi.route import method
+from gazi.response import HtmlResponse, Response
 
 # /
 class _:

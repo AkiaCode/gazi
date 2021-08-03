@@ -1,6 +1,6 @@
-from gaji.response import HtmlResponse, Response
-from gaji.request import Request
-from gaji.route import method
+from gazi.response import HtmlResponse, Response
+from gazi.request import Request
+from gazi.route import method
 
 # /api/*
 class API:
