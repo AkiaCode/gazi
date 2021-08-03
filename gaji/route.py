@@ -21,6 +21,7 @@ class Route:
                     )
                 continue
 
+            """
             annotations = []
 
             if hasattr(getattr(class_name, func_name), "__annotations__"):
@@ -40,13 +41,14 @@ class Route:
                         )
                     else:
                         varnames.append({"name": co_varname, "type": None})
+            """
 
             class_func_names.append(
                 {
                     "class_name": class_name.__name__,
                     "func_name": func_name,
                     "func": getattr(class_name, func_name),
-                    "parameter": varnames,
+                    # "parameter": varnames,
                     "method": "GET",
                 }
             )
