@@ -11,7 +11,7 @@ setuptools.setup(
     name="gazi",
     version="0.1.1",
     author="Catry",
-    description="class-based web framework",
+    description="A lightweight, class-based, easy-to-use ASGI framework",
     license="MIT",
     requirements=requirements,
     long_description=long_description,
