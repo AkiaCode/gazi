@@ -15,7 +15,10 @@ class API:
     #  /api/hello
     @method.GET
     def hello(self, request: Request) -> Response:
-        return HtmlResponse(f"<h1>Hello world, Username: {request.query('name')}</h1>")
+        return HtmlResponse(
+            f"<h1>Hello world, Username: {request.query('name')}</h1>",
+            {"test1": "test", "asd": "a"},
+        )
 
     # /api/bye
     @method.GET

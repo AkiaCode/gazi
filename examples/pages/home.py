@@ -1,4 +1,3 @@
-from gaji.request import Request
 from gaji.route import method
 from gaji.response import HtmlResponse, Response
 

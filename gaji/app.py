@@ -4,19 +4,20 @@ import typing
 
 class App:
     def __init__(self):
-        self.routes = []
-        self.send = typing.Any
-        self.receive = typing.Any
+        self.__routes = []
+        self.__send = typing.Any
+        self.__receive = typing.Any
 
     async def __call__(self, scope, receive, send) -> None:
         assert scope["type"] == "http"
-        self.send = send
-        self.receive = receive
+        self.__send = send
+        self.__receive = receive
 
-        for route in self.routes:
+        for route in self.__routes:
+
             if (
-                route["class_name"].lower() == "_".lower()
-                and "/" == scope["path"].lower()
+                route["class_name"] == "_"
+                and "/" == scope["path"]
                 and route["method"] == scope["method"]
             ):
 
@@ -26,13 +27,14 @@ class App:
                 else:
                     RuntimeError("function __render__ not found")
 
-                await self.send_body(
-                    func.to_status(), route["method"], func.to_cType(), func.to_data()
+                await self.__send_body(
+                    func.status, route["method"], func.cType, func.data, func.headers
                 )
                 break
 
             elif (
                 "/" + route["class_name"].lower() == scope["path"].lower()
+                or "/" + route["class_name"].lower() + "/" == scope["path"].lower()
                 and route["method"] == scope["method"]
             ):
                 if route["func_name"] == "__render__":
@@ -40,20 +42,27 @@ class App:
                 else:
                     RuntimeError("function __render__ not found")
 
-                await self.send_body(
-                    func.to_status(), route["method"], func.to_cType(), func.to_data()
+                await self.__send_body(
+                    func.status, route["method"], func.cType, func.data, func.headers
                 )
                 break
+
             elif (
                 "/" + route["class_name"].lower() + "/" + route["func_name"].lower()
+                == scope["path"].lower()
+                or "/"
+                + route["class_name"].lower()
+                + "/"
+                + route["func_name"].lower()
+                + "/"
                 == scope["path"].lower()
                 and route["method"] == scope["method"]
             ):
 
                 func = route["func"](scope)
 
-                await self.send_body(
-                    func.to_status(), route["method"], func.to_cType(), func.to_data()
+                await self.__send_body(
+                    func.status, route["method"], func.cType, func.data, func.headers
                 )
                 break
             else:
@@ -61,27 +70,28 @@ class App:
 
     def handlers(self, routes=[]):
         for route in routes:
-            self.routes.extend(Route().register(route))
+            self.__routes.extend(Route().register(route))
 
-    async def send_body(
-        self, status=404, method="GET", cType="text/plain", body="NOT FOUND"
+    async def __send_body(
+        self, status=404, method="GET", cType="text/plain", body="NOT FOUND", headers=[]
     ):
-        await self.send(
+        # [[b'content-type', b'text/html'], headers]
+        headers.append([b"content-type", bytes(cType + "; charset=utf-8", "utf-8")])
+
+        await self.__send(
             {
                 "type": "http.response.start",
                 "status": status,
                 "method": method,
-                "headers": [
-                    [b"content-type", bytes(cType, "utf-8")],
-                ],
+                "headers": headers,
             }
         )
 
-        await self.send(
+        await self.__send(
             {
                 "type": "http.response.body",
                 "body": bytes(body, "utf-8"),
             }
         )
 
-        await self.receive()
+        await self.__receive()

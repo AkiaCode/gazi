@@ -1,7 +1,6 @@
 class Request:
     def __init__(self, scope):
         self.__scope = scope
-        self.query_string = str(self.__scope["query_string"], "utf-8")
 
     def query(self, key=None):
         if "query_string" in self.__scope:
@@ -13,6 +12,10 @@ class Request:
                         return query_string.replace(key + "=", "")
         else:
             return None
+
+    @property
+    def query_string(self) -> str:
+        return str(self.__scope["query_string"], "utf-8")
 
     @property
     def root_path(self):

@@ -1,24 +1,42 @@
 class Response:
-    def __init__(self, data, status=200, cType="text/plain"):
-        self.status = status
-        self.data = data
-        self.cType = cType
+    def __init__(self, data, headers=[], status=200, cType="text/plain"):
+        self.__data = data
+        self.__headers = headers
+        self.__status = status
+        self.__cType = cType
 
-    def to_data(self) -> str:
-        return self.data
+    @property
+    def headers(self):
+        bytes_headers = []
 
-    def to_cType(self) -> str:
-        return self.cType
+        if len(self.__headers) == 0:
+            return bytes_headers
+        else:
+            for header in self.__headers.items():
+                bytes_headers.append(
+                    [bytes(header[0], "utf-8"), bytes(header[1], "utf-8")]
+                )
 
-    def to_status(self) -> int:
-        return self.status
+        return bytes_headers
+
+    @property
+    def data(self) -> str:
+        return self.__data
+
+    @property
+    def cType(self) -> str:
+        return self.__cType
+
+    @property
+    def status(self) -> int:
+        return self.__status
 
 
 class HtmlResponse(Response):
-    def __init__(self, data, status=200):
-        super().__init__(data, status, "text/html")
+    def __init__(self, data, headers=[], status=200):
+        super().__init__(data, headers, status, "text/html")
 
 
 class JsonResponse(Response):
-    def __init__(self, data, status=200):
-        super().__init__(data, status, "application/json")
+    def __init__(self, data, headers=[], status=200):
+        super().__init__(data, headers, status, "application/json")
