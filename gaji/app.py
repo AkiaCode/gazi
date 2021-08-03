@@ -1,3 +1,4 @@
+from gaji.route import Route
 import typing
 
 
@@ -13,10 +14,10 @@ class App:
         self.receive = receive
 
         for route in self.routes:
-
             if (
                 route["class_name"].lower() == "_".lower()
                 and "/" == scope["path"].lower()
+                and route["method"] == scope["method"]
             ):
 
                 func = typing.Any
@@ -30,7 +31,10 @@ class App:
                 )
                 break
 
-            elif "/" + route["class_name"].lower() == scope["path"].lower():
+            elif (
+                "/" + route["class_name"].lower() == scope["path"].lower()
+                and route["method"] == scope["method"]
+            ):
                 if route["func_name"] == "__render__":
                     func = route["func"](scope)
                 else:
@@ -43,6 +47,7 @@ class App:
             elif (
                 "/" + route["class_name"].lower() + "/" + route["func_name"].lower()
                 == scope["path"].lower()
+                and route["method"] == scope["method"]
             ):
 
                 func = route["func"](scope)
@@ -54,10 +59,13 @@ class App:
             else:
                 continue
 
-    def route(self, routes):
-        self.routes.extend(routes)
+    def handlers(self, routes=[]):
+        for route in routes:
+            self.routes.extend(Route().register(route))
 
-    async def send_body(self, status=200, method="GET", cType="text/plain", body=""):
+    async def send_body(
+        self, status=404, method="GET", cType="text/plain", body="NOT FOUND"
+    ):
         await self.send(
             {
                 "type": "http.response.start",

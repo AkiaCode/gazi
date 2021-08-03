@@ -4,9 +4,9 @@ import typing
 
 class Route:
     def __init__(self) -> None:
-        self.class_func_names = []
+        pass
 
-    def register(self, class_name: typing.Any) -> typing.List[typing.Dict[str, str]]:
+    def register(self, class_name: typing.Any) -> typing.Any:
         class_func_names = []
         for func_name in dir(class_name):
             if func_name.startswith("__") and func_name.endswith("__"):
@@ -43,23 +43,38 @@ class Route:
                         varnames.append({"name": co_varname, "type": None})
             """
 
+            if hasattr(getattr(class_name, func_name), "name") == False:
+                RuntimeError("must use @method.GET decorator")
+
             class_func_names.append(
                 {
                     "class_name": class_name.__name__,
                     "func_name": func_name,
                     "func": getattr(class_name, func_name),
                     # "parameter": varnames,
-                    "method": "GET",
+                    "method": getattr(class_name, func_name).name,
                 }
             )
 
-        self.class_func_names = class_func_names
         return class_func_names
 
 
 class method(Route):
     class GET(object):
         def __init__(self, func):
+            self.name = "GET"
+            self.func = func
+
+        def __call__(self, args):
+            if len(self.func.__code__.co_varnames) == 1:
+                return self.func(self)
+            else:
+                args = Request(args)
+                return self.func(self, args)
+
+    class POST(object):
+        def __init__(self, func):
+            self.name = "POST"
             self.func = func
 
         def __call__(self, args):

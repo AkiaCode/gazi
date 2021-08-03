@@ -1,20 +1,10 @@
 class Request:
     def __init__(self, scope):
-        self.scope = scope
-        self.type = str(self.scope["type"])
-        self.path = str(self.scope["path"])
-        self.scheme = str(self.scope["scheme"])
-        self.method = str(self.scope["method"])
-        self.raw_path = str(self.scope["raw_path"])
-        self.http_version = str(self.scope["http_version"])
-        self.server = self.scope["server"]
-        self.client = self.scope["client"]
-        self.headers = self.scope["headers"]
-        self.root_path = self.scope["root_path"]
-        self.query_string = str(self.scope["query_string"], "utf-8")
+        self.__scope = scope
+        self.query_string = str(self.__scope["query_string"], "utf-8")
 
     def query(self, key=None):
-        if "query_string" in self.scope:
+        if "query_string" in self.__scope:
             if key is None:
                 return self.query_string
             else:
@@ -23,3 +13,43 @@ class Request:
                         return query_string.replace(key + "=", "")
         else:
             return None
+
+    @property
+    def root_path(self):
+        return self.__scope["root_path"]
+
+    @property
+    def client(self):
+        return self.__scope["client"]
+
+    @property
+    def server(self):
+        return self.__scope["server"]
+
+    @property
+    def http_version(self):
+        return self.__scope["http_version"]
+
+    @property
+    def raw_path(self):
+        return self.__scope["raw_path"]
+
+    @property
+    def headers(self):
+        return self.__scope["headers"]
+
+    @property
+    def type(self) -> str:
+        return self.__scope["type"]
+
+    @property
+    def path(self) -> str:
+        return self.__scope["path"]
+
+    @property
+    def scheme(self) -> str:
+        return self.__scope["scheme"]
+
+    @property
+    def method(self) -> str:
+        return self.__scope["method"]
