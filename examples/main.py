@@ -1,6 +1,6 @@
 import uvicorn
-from examples.pages.home import _ as Home
-from examples.pages.api import API
+from pages.home import _ as Home
+from pages.api import API
 from gazi import App
 
 app = App()
