@@ -1,4 +1,4 @@
-class Request:
+class Request(object):
     def __init__(self, scope):
         self.__scope = scope
 
@@ -10,6 +10,17 @@ class Request:
                 for query_string in self.query_string.split("&"):
                     if key in query_string:
                         return query_string.replace(key + "=", "")
+        else:
+            return None
+
+    def headers(self, key=None):
+        if "headers" in self.__scope:
+            if key is None:
+                return self.__scope['headers']
+            else:
+                for header in self.__scope['headers']:
+                    if key in header:
+                        return str(header[key], 'utf-8')
         else:
             return None
 
@@ -38,10 +49,6 @@ class Request:
         return self.__scope["raw_path"]
 
     @property
-    def headers(self):
-        return self.__scope["headers"]
-
-    @property
     def type(self) -> str:
         return self.__scope["type"]
 
@@ -56,3 +63,7 @@ class Request:
     @property
     def method(self) -> str:
         return self.__scope["method"]
+
+    @property
+    def body(self) -> str:
+        return self.__scope['body'] or None

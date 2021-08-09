@@ -15,3 +15,5 @@ docs/crowdin.py
 *.flac
 *.mo
 __pycache__
+dist
+build

@@ -7,11 +7,14 @@ class App:
         self.__routes = []
         self.__send = typing.Any
         self.__receive = typing.Any
+        self.__body = ""
+        self.__scope =  typing.Any
 
     async def __call__(self, scope, receive, send) -> None:
         assert scope["type"] == "http"
         self.__send = send
         self.__receive = receive
+        self.__scope = scope
 
         for route in self.__routes:
 
@@ -23,6 +26,7 @@ class App:
 
                 func = typing.Any
                 if route["func_name"] == "__render__":
+                    await self.__get_body()
                     func = route["func"](scope)
                 else:
                     RuntimeError("function __render__ not found")
@@ -38,6 +42,7 @@ class App:
                 and route["method"] == scope["method"]
             ):
                 if route["func_name"] == "__render__":
+                    await self.__get_body()
                     func = route["func"](scope)
                 else:
                     RuntimeError("function __render__ not found")
@@ -55,6 +60,8 @@ class App:
                 and route["method"] == scope["method"]
             ):
 
+                await self.__get_body()
+
                 func = route["func"](scope)
 
                 await self.__send_body(
@@ -67,6 +74,18 @@ class App:
     def handlers(self, routes=[]):
         for route in routes:
             self.__routes.extend(Route().register(route))
+
+
+    async def __get_body(self):
+        body_message = await self.__receive()
+
+        self.__body = body_message.get('body', b'')
+
+        while body_message.get('more_body', False):
+            body_message = await self.__receive()
+            self.__body += body_message.get('body', b'')
+
+        self.__scope.update({"body": self.__body.decode("utf-8") })
 
     async def __send_body(
         self, status=404, method="GET", cType="text/plain", body="NOT FOUND", headers=[]

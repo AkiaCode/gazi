@@ -9,6 +9,9 @@ class Route:
     def register(self, class_name: typing.Any) -> typing.Any:
         class_func_names = []
         for func_name in dir(class_name):
+            if hasattr(getattr(class_name, func_name), "name") == False:
+                RuntimeError("must use @method.GET decorator")
+
             if func_name.startswith("__") and func_name.endswith("__"):
                 if "render" in func_name:
                     class_func_names.append(
@@ -16,7 +19,7 @@ class Route:
                             "class_name": class_name.__name__,
                             "func_name": func_name,
                             "func": getattr(class_name, func_name),
-                            "method": "GET",
+                            "method": getattr(class_name, func_name).name,
                         }
                     )
                 continue
@@ -42,9 +45,6 @@ class Route:
                     else:
                         varnames.append({"name": co_varname, "type": None})
             """
-
-            if hasattr(getattr(class_name, func_name), "name") == False:
-                RuntimeError("must use @method.GET decorator")
 
             class_func_names.append(
                 {
