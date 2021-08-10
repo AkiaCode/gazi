@@ -85,7 +85,7 @@ class App:
             body_message = await self.__receive()
             self.__body += body_message.get('body', b'')
 
-        self.__scope.update({"body": self.__body.decode("utf-8") })
+        self.__scope.update({"body": self.__body })
 
     async def __send_body(
         self, status=404, method="GET", cType="text/plain", body="NOT FOUND", headers=[]

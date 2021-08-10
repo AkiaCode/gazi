@@ -1,5 +1,5 @@
 class Response:
-    def __init__(self, data, headers=[], status=200, cType="text/plain"):
+    def __init__(self, data, headers=[], status=200, cType="application/x-www-form-urlencoded"):
         self.__data = data
         self.__headers = headers
         self.__status = status
@@ -31,6 +31,9 @@ class Response:
     def status(self) -> int:
         return self.__status
 
+class PlainResponse(Response):
+    def __init__(self, data, status=200, cType="text/plain"):
+        super().__init__(data, status=status, cType=cType)
 
 class HtmlResponse(Response):
     def __init__(self, data, headers=[], status=200):
@@ -40,3 +43,15 @@ class HtmlResponse(Response):
 class JsonResponse(Response):
     def __init__(self, data, headers=[], status=200):
         super().__init__(data, headers, status, "application/json")
+
+class FormDataResponse(Response):
+    def __init__(self, data, headers=[], status=200):
+        self.__data = ""
+
+        for i in data:
+            self.__data += f"--GaziFormBoundary\r\nContent-Disposition: form-data; name=\"{i['name']}\"; filename=\"{i['filename']}\"\r\n\r\n{open(i['file'], 'rb').read()}\r\n"
+        self.__data += "--GaziFormBoundary--\r\n"
+
+        super().__init__(self.__data, headers, status, "multipart/form-data; boundary=\"GaziFormBoundary\"")
+
+
