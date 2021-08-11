@@ -19,8 +19,8 @@ class Request(object):
                 return self.__scope['headers']
             else:
                 for header in self.__scope['headers']:
-                    if key in header:
-                        return str(header[key], 'utf-8')
+                    if key == str(header[0], 'utf-8'):
+                        return str(header[1], 'utf-8')
         else:
             return None
 
@@ -67,3 +67,29 @@ class Request(object):
     @property
     def body(self) -> str:
         return self.__scope['body'] or None
+
+    @property
+    def files(self) -> dict:
+        boundary = self.headers("content-type").split("=")[1]
+        splited = self.body[: len(self.body) - len(boundary) - 6].split(
+            ("--" + boundary + "\r\n").encode("utf8")
+        )
+        data = {}
+        for content in splited[1:]:
+            splited = content.split(b"\r\n")
+            disposition = splited[0].decode("utf8")
+            split_by_semi = disposition.split(";")
+            name = split_by_semi[1][7 : len(split_by_semi[1]) - 1]
+            result = {}
+            if len(split_by_semi) > 2:
+                filename = split_by_semi[2][11 : len(split_by_semi[2]) - 1]
+                result["filename"] = filename
+
+            value = b"\r\n".join(splited[2 : len(splited) - 1])
+            try:
+                value = value.decode("utf8")
+            except UnicodeDecodeError:
+                pass
+            result["content"] = value
+            data[name] = result
+        return data

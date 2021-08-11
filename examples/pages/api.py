@@ -29,5 +29,5 @@ class API:
     # /api/bye
     @method.GET
     def bye(self, request: Request) -> Response:
-        print(request.body)
+        print(request.headers('host'))
         return HtmlResponse(f"<h1>Bye world, Username: {request.query('name')}</h1>")

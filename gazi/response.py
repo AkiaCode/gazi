@@ -32,8 +32,8 @@ class Response:
         return self.__status
 
 class PlainResponse(Response):
-    def __init__(self, data, status=200, cType="text/plain"):
-        super().__init__(data, status=status, cType=cType)
+    def __init__(self, data, headers=[], status=200):
+        super().__init__(data, headers, status, "text/plain")
 
 class HtmlResponse(Response):
     def __init__(self, data, headers=[], status=200):
