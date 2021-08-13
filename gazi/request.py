@@ -85,7 +85,7 @@ class Request(object):
                 filename = split_by_semi[2][11 : len(split_by_semi[2]) - 1]
                 result["filename"] = filename
 
-            value = b"\r\n".join(splited[2 : len(splited) - 1])
+            value = b"\r\n".join(splited[splited.index(b'') + 1 : len(splited) - 1])
             try:
                 value = value.decode("utf8")
             except UnicodeDecodeError:
